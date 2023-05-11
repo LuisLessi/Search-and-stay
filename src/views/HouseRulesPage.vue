@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard">
-    <h1>House Rules Dashboard</h1>
+    <h1>Dashboard</h1>
     <div class="table-container">
       <table>
         <thead>
@@ -28,8 +28,8 @@
       </table>
   
       <div class="pagination">
-        <button :disabled="!pagination.links.prev" @click="prevPage">Prev</button>
-        <button :disabled="!pagination.links.next" @click="nextPage">Next</button>
+        <button :disabled="pagination.current_page === 1" @click="prevPage">Prev</button>
+    <button :disabled="pagination.current_page === pagination.total_pages" @click="nextPage">Next</button>
       </div>
     </div>
     <div class="actions">
@@ -62,16 +62,14 @@ export default {
   data() {
     return {
       rules: [],
+      page: 1,
       pagination: {
         total: 0,
         count: 0,
         per_page: 10,
         current_page: 1,
         total_pages: 0,
-        links: {
-          next: null,
-          prev: null
-        }
+        links: {}
       },
       currentRule: {
         id: null,
@@ -88,15 +86,32 @@ export default {
   },
   methods: {
     loadData() {
-      const url = `https://sys-dev.searchandstay.com/api/admin/house_rules?page=${this.pagination.current_page}`
-      const token = localStorage.getItem('token')
-      axios.get(url, { headers: { Authorization: `Bearer ${token}` } })
-        .then(res => {
-          this.rules = res.data.data.entities
-          this.pagination = res.data.data.pagination
-        })
-        .catch(err => console.log(err))
+    const url = `https://sys-dev.searchandstay.com/api/admin/house_rules?page=${this.pagination.current_page}`
+    const token = localStorage.getItem('token')
+    axios.get(url, { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => {
+        this.rules = this.paginateData(res.data.data.entities) // atualiza apenas os dados da página atual
+        this.pagination = res.data.data.pagination
+      })
+      .catch(err => console.log(err))
     },
+    paginateData(data) {
+    const start = (this.page - 1) * 10 // define o início da página atual
+    const end = start + 10 // define o fim da página atual
+    return data.slice(start, end) // retorna os 10 itens da página atual
+     },
+     nextPage() {
+  if (this.pagination.links.next) {
+    this.pagination.current_page++;
+    this.loadData();
+  }
+},
+prevPage() {
+  if (this.pagination.links.prev) {
+    this.pagination.current_page--;
+    this.loadData();
+  }
+},
     submitCreate() {
   const url = 'https://sys-dev.searchandstay.com/api/admin/house_rules';
   const token = localStorage.getItem('token');
@@ -179,3 +194,13 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+h1{
+  font-size: 30px;
+}
+.modal-content{
+  margin-left: 45%;
+  margin-top: -40%;
+}
+</style>

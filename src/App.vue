@@ -15,6 +15,9 @@
       </q-toolbar>
     </q-header>
     <q-page-container>
+      <div style="text-align: center;">
+        <h1>Olá, seja bem vindo. Faça o login para poder acessar o dashboard</h1>
+      </div>
       <router-view />
     </q-page-container>
   </q-layout>
@@ -42,5 +45,8 @@ a {
   text-decoration: none;
   color: inherit;
 
+}
+h1{
+  font-size: 40px;
 }
 </style>
