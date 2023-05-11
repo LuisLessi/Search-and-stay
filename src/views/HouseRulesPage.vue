@@ -13,7 +13,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="rule in rules" :key="rule.id">
+          <tr  v-for="rule in rules" :key="rule.id">
             <td>{{ rule.id }}</td>
             <td>{{ rule.name }}</td>
             <td>{{ rule.active }}</td>
@@ -26,8 +26,11 @@
           </tr>
         </tbody>
       </table>
-      <q-pagination v-if="pagination.total_pages > 1" v-model="pagination.current_page" :max-pages="5"
-                    :boundary-links="true" :total-pages="pagination.total_pages" @input="loadData"/>
+  
+      <div class="pagination">
+        <button :disabled="!pagination.links.prev" @click="prevPage">Prev</button>
+        <button :disabled="!pagination.links.next" @click="nextPage">Next</button>
+      </div>
     </div>
     <div class="actions">
       <button @click="createRule">Create new House Rule</button>
@@ -95,16 +98,38 @@ export default {
         .catch(err => console.log(err))
     },
     submitCreate() {
-  const url = 'https://sys-dev.searchandstay.com/api/admin/house_rules'
-  const token = localStorage.getItem('token')
-  console.log(this.currentRule)
-  axios.post(url, this.currentRule, { headers: { Authorization: `Bearer ${token}` } })
+  const url = 'https://sys-dev.searchandstay.com/api/admin/house_rules';
+  const token = localStorage.getItem('token');
+  const data = {
+    house_rules: {
+      name: this.currentRule.name,
+      active: this.currentRule.active,
+    },
+  };
+  axios.post(url, data, { headers: { Authorization: `Bearer ${token}` } })
     .then(() => {
-      this.showModal = false
-      this.currentAction = ''
-      this.loadData()
+      this.showModal = false;
+      this.currentAction = '';
+      this.loadData();
     })
-    .catch(err => console.log(err))
+    .catch(err => console.log(err));
+},
+  submitEdit() {
+  const url = `https://sys-dev.searchandstay.com/api/admin/house_rules/${this.currentRule.id}`;
+  const token = localStorage.getItem('token');
+  const data = {
+    house_rules: {
+      name: this.currentRule.name,
+      active: this.currentRule.active,
+    },
+  };
+  axios.put(url, data, { headers: { Authorization: `Bearer ${token}` } })
+    .then(() => {
+      this.showModal = false;
+      this.currentAction = '';
+      this.loadData();
+    })
+    .catch(err => console.log(err));
 },
     showRule(id) {
   this.currentAction = '';

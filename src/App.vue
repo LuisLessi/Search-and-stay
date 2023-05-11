@@ -2,12 +2,12 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-toolbar-title>
-          My App
-        </q-toolbar-title>
+        <a href="/"><q-toolbar-title class="title">
+          Search & Stay
+        </q-toolbar-title></a>
         <q-space />
-        <q-btn dense flat to="/" exact active-class="text-white" aria-label="Home">
-          Home
+        <q-btn dense flat to="/dashboard" exact active-class="text-white" aria-label="Home">
+          Dashboard
         </q-btn>
         <q-btn dense flat to="/login" exact active-class="text-white" aria-label="Login">
           Login
@@ -33,3 +33,14 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.title{
+  cursor: pointer;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+
+}
+</style>
